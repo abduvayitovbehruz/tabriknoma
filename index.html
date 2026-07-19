@@ -347,7 +347,7 @@
   <div class="wordmark"><span class="dot"></span><span class="label">Tabriknoma</span></div>
 
   <!-- GREETING SCREEN -->
-  <div id="greeting">
+  <div id="greeting" onclick="goToVideo(event)">
     <div class="eyebrow">Bugun — sening kuning</div>
     <h1 class="headline">
       Akajon,<br>
@@ -356,7 +356,7 @@
     </h1>
     <p class="subline">Baxtli, sog'lom va orzularing ro'yobga chiqadigan yil bo'lsin.
       Sen uchun bir video tayyorladim — davom etish uchun bosing.</p>
-    <button type="button" class="tap-hint" id="tapHintBtn">
+    <button type="button" class="tap-hint" id="tapHintBtn" onclick="goToVideo(event)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="5 3 19 12 5 21 5 3"></polygon>
       </svg>
@@ -512,41 +512,30 @@
     if (greetingLeft) return;
     greetingLeft = true;
 
-    // Start playback immediately, inside the user gesture — mobile browsers
-    // (including Telegram's in-app browser) block autoplay if play() runs
-    // even a few milliseconds after the tap/click that triggered it.
-    video.play().catch(()=>{ /* user can tap the native play icon */ });
+    // Switch screens immediately — no delay, no ambiguity about whether the tap worked.
+    greeting.classList.add('leaving');
+    videoScreen.classList.add('active');
 
-    const rect = greeting.getBoundingClientRect();
-    const cx = e && e.clientX ? e.clientX : rect.width/2;
-    const cy = e && e.clientY ? e.clientY : rect.height/2;
-    spawnBurst(cx, cy, 80);
+    // Try to start playback inside the same gesture (best-effort; native
+    // controls let the person tap play manually if autoplay is blocked).
+    video.play().catch(()=>{});
 
-    setTimeout(()=>{
-      greeting.classList.add('leaving');
-      videoScreen.classList.add('active');
-    }, 380);
+    try{
+      const rect = greeting.getBoundingClientRect();
+      const cx = (e && typeof e.clientX === 'number') ? e.clientX : rect.width/2;
+      const cy = (e && typeof e.clientY === 'number') ? e.clientY : rect.height/2;
+      spawnBurst(cx, cy, 80);
+    }catch(err){ /* confetti is decorative — never let it block the transition */ }
   }
+  // Exposed globally so inline onclick/ontouchend attributes on the markup
+  // can call it directly — the most reliable way to guarantee a tap triggers
+  // this across all mobile browsers and in-app webviews (Telegram included).
+  window.goToVideo = goToVideo;
 
-  greeting.addEventListener('click', goToVideo);
-  greeting.addEventListener('touchend', function(e){
-    goToVideo(e.changedTouches && e.changedTouches[0] ? e.changedTouches[0] : e);
-  });
+  greeting.tabIndex = 0;
   greeting.addEventListener('keydown', (e)=>{
     if(e.key === 'Enter' || e.key === ' ') goToVideo(e);
   });
-  greeting.tabIndex = 0;
-
-  // Redundant direct binding on the pill button itself, in case something
-  // ever blocks the whole-screen listener from receiving the tap.
-  const tapHintBtn = document.getElementById('tapHintBtn');
-  if (tapHintBtn) {
-    tapHintBtn.addEventListener('click', goToVideo);
-    tapHintBtn.addEventListener('touchend', function(e){
-      e.preventDefault();
-      goToVideo(e.changedTouches && e.changedTouches[0] ? e.changedTouches[0] : e);
-    });
-  }
 
   video.addEventListener('error', ()=>{
     missing.classList.add('show');

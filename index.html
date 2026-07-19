@@ -79,6 +79,9 @@
     text-align:center;
     padding:32px;
     cursor:pointer;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
     transition:opacity 0.9s ease, transform 0.9s ease;
   }
   #greeting.leaving{
@@ -490,6 +493,12 @@
   function goToVideo(e){
     if (greetingLeft) return;
     greetingLeft = true;
+
+    // Start playback immediately, inside the user gesture — mobile browsers
+    // (including Telegram's in-app browser) block autoplay if play() runs
+    // even a few milliseconds after the tap/click that triggered it.
+    video.play().catch(()=>{ /* user can tap the native play icon */ });
+
     const rect = greeting.getBoundingClientRect();
     const cx = e && e.clientX ? e.clientX : rect.width/2;
     const cy = e && e.clientY ? e.clientY : rect.height/2;
@@ -498,11 +507,13 @@
     setTimeout(()=>{
       greeting.classList.add('leaving');
       videoScreen.classList.add('active');
-      video.play().catch(()=>{});
     }, 380);
   }
 
   greeting.addEventListener('click', goToVideo);
+  greeting.addEventListener('touchend', function(e){
+    goToVideo(e.changedTouches && e.changedTouches[0] ? e.changedTouches[0] : e);
+  });
   greeting.addEventListener('keydown', (e)=>{
     if(e.key === 'Enter' || e.key === ' ') goToVideo(e);
   });

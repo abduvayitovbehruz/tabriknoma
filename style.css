@@ -1,0 +1,250 @@
+:root{
+  --midnight:#0B1130;
+  --gold:#F2C14E;
+  --coral:#FF6B6B;
+  --violet:#8B7CF6;
+  --cream:#F6F1E4;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html, body{
+  height:100%;
+  background:var(--midnight);
+  overflow:hidden;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+#stage{
+  position:relative;
+  width:100%;
+  height:100vh;
+  overflow:hidden;
+
+  /* Put your own photo next to this file, named bg.jpg — it becomes the
+     background automatically. If bg.jpg is missing, the plain color/gradient
+     below is used instead, so nothing breaks. */
+  background-image:
+    linear-gradient(180deg, rgba(11,17,48,0.55), rgba(11,17,48,0.8)),
+    url('bg.jpg');
+  background-size:cover;
+  background-position:center;
+  background-color:var(--midnight);
+}
+
+/* ---------- wordmark ---------- */
+.wordmark{
+  position:absolute;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:6;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 18px;
+  border-radius:999px;
+  border:1px solid rgba(242,193,78,0.35);
+  background:rgba(11,17,48,0.55);
+  pointer-events:none;
+}
+.wordmark .dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--gold);
+}
+.wordmark span:last-child{
+  font-style:italic;
+  color:var(--gold);
+  font-size:13px;
+  letter-spacing:0.08em;
+}
+
+/* ---------- balloons (pure CSS, decorative only) ---------- */
+.balloon{
+  position:absolute;
+  bottom:-140px;
+  width:40px;
+  height:52px;
+  border-radius:50% 50% 50% 50% / 58% 58% 42% 42%;
+  opacity:0.85;
+  pointer-events:none;
+  z-index:1;
+  animation:floatUp 13s linear infinite;
+}
+.b1{ left:8%;  background:var(--coral);  animation-delay:0s;  }
+.b2{ left:24%; background:var(--gold);   animation-delay:2.4s; width:32px; height:42px; }
+.b3{ left:52%; background:var(--violet); animation-delay:5s;  }
+.b4{ left:70%; background:var(--cream);  animation-delay:1.2s; width:36px; height:46px; }
+.b5{ left:88%; background:var(--gold);   animation-delay:7s;  }
+
+@keyframes floatUp{
+  from{ transform:translateY(0); }
+  to{ transform:translateY(-120vh); }
+}
+
+/* ---------- shared screen layout ---------- */
+.screen{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:3;
+}
+
+/* ---------- greeting screen ---------- */
+#greeting{
+  flex-direction:column;
+  text-align:center;
+  padding:32px;
+}
+
+.eyebrow{
+  font-size:12px;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:20px;
+}
+
+.headline{
+  font-weight:700;
+  color:var(--cream);
+  font-size:clamp(38px, 10vw, 88px);
+  line-height:1.08;
+}
+.headline em{
+  font-style:italic;
+  font-weight:600;
+  color:var(--gold);
+}
+.headline .line2{
+  display:block;
+  color:var(--coral);
+  font-size:clamp(24px, 6vw, 50px);
+  margin-top:6px;
+}
+
+.subline{
+  margin-top:22px;
+  max-width:460px;
+  color:rgba(246,241,228,0.75);
+  font-size:15px;
+  line-height:1.6;
+}
+
+.tap-hint{
+  margin-top:44px;
+  padding:16px 34px;
+  border-radius:999px;
+  border:1px solid rgba(242,193,78,0.6);
+  background:rgba(242,193,78,0.1);
+  color:var(--gold);
+  font-size:15px;
+  font-weight:bold;
+  letter-spacing:0.03em;
+  cursor:pointer;
+}
+.tap-hint:active{
+  background:rgba(242,193,78,0.25);
+}
+
+/* ---------- video screen ---------- */
+#video-screen{
+  flex-direction:column;
+  gap:16px;
+  padding:80px 20px 30px;
+  opacity:0;
+  pointer-events:none;
+}
+
+#back-btn{
+  position:absolute;
+  top:20px;
+  left:20px;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  border:1px solid rgba(246,241,228,0.3);
+  background:rgba(11,17,48,0.6);
+  color:var(--cream);
+  font-size:18px;
+  cursor:pointer;
+  z-index:5;
+}
+
+.video-frame{
+  width:100%;
+  max-width:680px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+}
+
+.video-caption{
+  color:var(--gold);
+  font-style:italic;
+  font-size:14px;
+}
+
+.video-card{
+  position:relative;
+  width:100%;
+  min-height:180px;
+  border-radius:18px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#bday-video{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:70vh;
+}
+
+.missing-video{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  text-align:center;
+  color:var(--cream);
+  padding:24px;
+}
+.missing-video.show{ display:flex; }
+.missing-video h2{
+  color:var(--gold);
+  font-size:20px;
+}
+.missing-video code{
+  background:rgba(246,241,228,0.1);
+  padding:3px 8px;
+  border-radius:6px;
+  color:var(--coral);
+}
+.missing-video p{
+  font-size:13px;
+  line-height:1.5;
+  color:rgba(246,241,228,0.7);
+}
+
+/* ---------- state classes toggled by script.js ---------- */
+.is-hidden{
+  display:none !important;
+}
+.is-visible{
+  opacity:1 !important;
+  pointer-events:auto !important;
+}

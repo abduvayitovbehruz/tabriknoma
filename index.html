@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Tabriknoma — Akajonga tug'ilgan kun tabrigi</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="stage">
+
+  <div class="wordmark"><span class="dot"></span><span>Tabriknoma</span></div>
+
+  <div class="balloon b1"></div>
+  <div class="balloon b2"></div>
+  <div class="balloon b3"></div>
+  <div class="balloon b4"></div>
+  <div class="balloon b5"></div>
+
+  <!-- GREETING SCREEN -->
+  <section id="greeting" class="screen">
+    <p class="eyebrow">Bugun — sening kuning</p>
+    <h1 class="headline">
+      Akajon,<br>
+      <em>tabriklayman</em>
+      <span class="line2">Tug'ilgan kuning muborak!</span>
+    </h1>
+    <p class="subline">Baxtli, sog'lom va orzularing ro'yobga chiqadigan yil bo'lsin.
+      Sen uchun bir video tayyorladim.</p>
+
+    <button type="button" id="tap-btn" class="tap-hint">
+      Videoni ko'rish uchun bosing
+    </button>
+  </section>
+
+  <!-- VIDEO SCREEN -->
+  <section id="video-screen" class="screen">
+    <button type="button" id="back-btn" aria-label="Orqaga">←</button>
+    <div class="video-frame">
+      <p class="video-caption">Akajonga — mehr bilan 🎂</p>
+      <div class="video-card">
+        <video id="bday-video" controls playsinline preload="metadata">
+          <source src="video.mp4" type="video/mp4">
+        </video>
+        <div id="missing-video" class="missing-video">
+          <h2>Video topilmadi</h2>
+          <p>Bu faylni tug'ilgan kun videosi bilan bir xil papkaga
+            <code>video.mp4</code> nomi bilan joylang, so'ng sahifani qayta oching.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

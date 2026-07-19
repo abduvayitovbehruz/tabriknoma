@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Tabriknoma — Akajonga tug'ilgan kun tabrigi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,12 +23,15 @@
     background:var(--midnight);
     overflow:hidden;
     font-family:'Inter', sans-serif;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
   }
   #stage{
     position:relative;
     width:100%;
     height:100vh;
     height:100dvh;
+    height:var(--tg-vh, 100dvh);
   }
 
   #bgImage{
@@ -144,9 +147,14 @@
     padding:14px 30px;
     border-radius:999px;
     border:1px solid rgba(242,193,78,0.5);
+    background:transparent;
     color:var(--gold);
+    font-family:'Inter', sans-serif;
     font-size:14px;
     letter-spacing:0.04em;
+    cursor:pointer;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
     opacity:0;
     animation:riseIn 0.9s ease forwards, pulseGlow 2.4s ease-in-out infinite;
     animation-delay:1.05s, 1.9s;
@@ -348,12 +356,12 @@
     </h1>
     <p class="subline">Baxtli, sog'lom va orzularing ro'yobga chiqadigan yil bo'lsin.
       Sen uchun bir video tayyorladim — davom etish uchun bosing.</p>
-    <div class="tap-hint">
+    <button type="button" class="tap-hint" id="tapHintBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="5 3 19 12 5 21 5 3"></polygon>
       </svg>
       Videoni ko'rish uchun bosing
-    </div>
+    </button>
   </div>
 
   <!-- VIDEO SCREEN -->
@@ -386,6 +394,16 @@
       if (tg.setHeaderColor) tg.setHeaderColor('#0B1130');
       if (tg.setBackgroundColor) tg.setBackgroundColor('#0B1130');
       if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+
+      function syncHeight(){
+        const h = tg.viewportStableHeight || tg.viewportHeight;
+        if (h) document.documentElement.style.setProperty('--tg-vh', h + 'px');
+      }
+      syncHeight();
+      // Telegram animates the expand — re-sync a few times as it settles.
+      setTimeout(syncHeight, 100);
+      setTimeout(syncHeight, 400);
+      if (tg.onEvent) tg.onEvent('viewportChanged', syncHeight);
     }catch(e){ /* not inside Telegram, ignore */ }
   })();
 
@@ -518,6 +536,17 @@
     if(e.key === 'Enter' || e.key === ' ') goToVideo(e);
   });
   greeting.tabIndex = 0;
+
+  // Redundant direct binding on the pill button itself, in case something
+  // ever blocks the whole-screen listener from receiving the tap.
+  const tapHintBtn = document.getElementById('tapHintBtn');
+  if (tapHintBtn) {
+    tapHintBtn.addEventListener('click', goToVideo);
+    tapHintBtn.addEventListener('touchend', function(e){
+      e.preventDefault();
+      goToVideo(e.changedTouches && e.changedTouches[0] ? e.changedTouches[0] : e);
+    });
+  }
 
   video.addEventListener('error', ()=>{
     missing.classList.add('show');
